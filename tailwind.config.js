@@ -5,7 +5,14 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily:{
+        'rubik':['Rubik 80s Fade'],
+      },
+      gridTemplateColumns: {
+        '14': 'repeat(14, minmax(0, 1fr))',
+      }
+    },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/line-clamp'),],
 }

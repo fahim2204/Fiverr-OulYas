@@ -5,20 +5,31 @@ const Login = () => {
     return (
         <>
             <Head>
-                <title>OulYas - Login</title>
+                <title>OulYas - Register</title>
             </Head>
             <main>
                 <div className="flex items-center min-h-screen bg-gray-100 justify-center px-2">
                     <div className="overflow-hidden rounded-lg shadow-lg sm:max-w-sm md:mx-auto w-full">
                         <div className="p-6 bg-white md:flex-1">
                             <h3 className="mb-3 mt-1 text-3xl font-semibold font-rubik text-gray-700 text-center hover:scale-110 transition-all duration-300"><Link href={"/"}>OulYas</Link></h3>
-                            <h3 className="mb-3 mt-1 text-base font-semibold text-gray-700 text-center">Welcome Back! Please Login</h3>
+                            <h3 className="mb-3 mt-1 text-base font-semibold text-gray-700 text-center">Welcome! Please Register</h3>
                             <form action="#" className="flex flex-col space-y-3">
+                                <div className="flex flex-col">
+                                    <label for="email" className="text-sm font-semibold text-gray-500">Full Name</label>
+                                    <input
+                                        type="text"
+                                        id="fullName"
+                                        name="fullName"
+                                        autofocus
+                                        className="px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
+                                    />
+                                </div>
                                 <div className="flex flex-col">
                                     <label for="email" className="text-sm font-semibold text-gray-500">Email address</label>
                                     <input
                                         type="email"
                                         id="email"
+                                        name="email"
                                         autofocus
                                         className="px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
                                     />
@@ -33,16 +44,27 @@ const Login = () => {
                                         className="px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
                                     />
                                 </div>
+                                <div className="flex flex-col space-y-1">
+                                    <div className="flex items-centerustify-between">
+                                        <label for="password" className="text-sm font-semibold text-gray-500">Confirm Password</label>
+                                    </div>
+                                    <input
+                                        type="password"
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        className="px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
+                                    />
+                                </div>
                                 <div>
                                     <button
                                         type="submit"
                                         className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
                                     >
-                                        Log in
+                                        Register
                                     </button>
                                 </div>
-                                <h3 className="mb-3 mt-1 text-sm font-semibold text-gray-500 text-center">Not Registered? <Link href={"/register"} className='hover:text-sky-500 cursor-pointer'>Register</Link></h3>
-                                <div className="flex flex-col space-y-5">
+                                <h3 className="mb-3 mt-1 text-sm font-semibold text-gray-500 text-center">Already Registered? <Link href={"/login"} className='hover:text-sky-500 cursor-pointer'>Login</Link></h3>
+                                <div className="flex flex-col space-y-4">
                                     <span className="flex items-center justify-center space-x-2">
                                         <span className="h-px bg-gray-400 w-14"></span>
                                         <span className="font-normal text-gray-500">or login with</span>
