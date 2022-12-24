@@ -14,7 +14,7 @@ export default function Home() {
       </Head>
       <main>
         <Navbar />
-        <div className='sm:max-w-5xl mx-auto mt-8 px-6'>
+        <div className='sm:max-w-6xl mx-auto mt-8 px-6'>
           <div className="grid grid-cols-14 gap-8 mb-5">
             <div className="col-span-10">
               <div className="grid grid-cols-2 gap-8">
@@ -25,6 +25,7 @@ export default function Home() {
             </div>
             <div className="col-span-4">
               <div className="flex flex-col">
+                <div className='text-center mt-3 mb-6'><Link className='px-4 text-sky-400 font-semibold hover:text-lime-50 hover:bg-sky-400 transition duration-500 shadow-md py-2 border rounded-3xl border-sky-400' href={"/blog/create"}>Create a post</Link></div>
                 <h3 className='text-xl font-bold mb-3'>Recent Post</h3>
                 <div className='mb-3'>
                   <Link href={"/blog"}>
