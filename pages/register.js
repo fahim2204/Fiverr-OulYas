@@ -1,36 +1,88 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import { useEffect, useState } from "react";
+import { apiUrl, MainTitle, notify } from "../utils/config";
+import axios from "axios"
+import { ToastContainer } from 'react-toastify'
 
-const Login = () => {
+
+const Register = () => {
+    const [registerData, setRegisterData] = useState({
+        fullName: "",
+        username: "",
+        password: "",
+        confirmPassword: "",
+    });
+    const [error, setError] = useState([])
+
+    useEffect(() => {
+        console.log("err=>", error);
+
+    }, [error])
+
+
+    const handleRegisterSubmit = (e) => {
+        e.preventDefault()
+        axios
+            .post(`/api/user`, registerData)
+            .then((x) => {
+                // setRegisterError([]);
+                setRegisterData({
+                    fullName: "",
+                    username: "",
+                    password: "",
+                    confirmPassword: "",
+                });
+                setError([]);
+                notify("Registration success!!");
+            })
+            .catch((e) => {
+                if (e.response.data.errors) {
+                    setError(e.response.data.errors)
+                } else {
+                    console.log("Error>> ", e)
+                }
+            });
+    }
+    const handleRegisterData = (e) => {
+        setRegisterData({ ...registerData, [e.target.name]: e.target.value });
+    };
+
+
     return (
         <>
             <Head>
-                <title>OulYas - Register</title>
+                <title>{MainTitle} - Register</title>
             </Head>
             <main>
+            <ToastContainer />
                 <div className="flex items-center min-h-screen bg-gray-100 justify-center px-2">
                     <div className="overflow-hidden rounded-lg shadow-lg sm:max-w-sm md:mx-auto w-full">
                         <div className="p-6 bg-white md:flex-1">
-                            <h3 className="mb-3 mt-1 text-3xl font-semibold font-rubik text-gray-700 text-center hover:scale-110 transition-all duration-300"><Link href={"/"}>OulYas</Link></h3>
+                            <h3 className="mb-3 mt-1 text-3xl font-semibold font-rubik text-gray-700 text-center hover:scale-110 transition-all duration-300"><Link href={"/"}>{MainTitle}</Link></h3>
                             <h3 className="mb-3 mt-1 text-base font-semibold text-gray-700 text-center">Welcome! Please Register</h3>
-                            <form action="#" className="flex flex-col space-y-3">
+                            <form onSubmit={handleRegisterSubmit} className="flex flex-col space-y-3">
                                 <div className="flex flex-col">
                                     <label for="email" className="text-sm font-semibold text-gray-500">Full Name</label>
                                     <input
                                         type="text"
                                         id="fullName"
                                         name="fullName"
-                                        autofocus
+                                        required
+                                        value={registerData["fullName"]}
+                                        onChange={(e) => handleRegisterData(e)}
                                         className="px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
                                     />
                                 </div>
                                 <div className="flex flex-col">
-                                    <label for="email" className="text-sm font-semibold text-gray-500">Email address</label>
+                                    <label for="email" className="text-sm font-semibold text-gray-500">Username</label>
                                     <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        autofocus
+                                        type="username"
+                                        id="username"
+                                        name="username"
+                                        required
+                                        value={registerData["username"]}
+                                        onChange={(e) => handleRegisterData(e)}
                                         className="px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
                                     />
                                 </div>
@@ -41,6 +93,10 @@ const Login = () => {
                                     <input
                                         type="password"
                                         id="password"
+                                        name="password"
+                                        required
+                                        value={registerData["password"]}
+                                        onChange={(e) => handleRegisterData(e)}
                                         className="px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
                                     />
                                 </div>
@@ -52,13 +108,25 @@ const Login = () => {
                                         type="password"
                                         id="confirmPassword"
                                         name="confirmPassword"
+                                        required
+                                        value={registerData["confirmPassword"]}
+                                        onChange={(e) => handleRegisterData(e)}
                                         className="px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
                                     />
+                                </div>
+                                <div className="flex flex-col space-y-1">
+                                    <ul className='list-disc m-0 flex flex-col ml-6'>
+                                        {error && error.map((err) => {
+                                            return (<>
+                                                <li className='text-rose-600 leading-5 text-sm'>{err.instancePath.replace('/','')} {err.message}</li>
+                                            </>)
+                                        })}
+                                    </ul>
                                 </div>
                                 <div>
                                     <button
                                         type="submit"
-                                        className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
+                                        className="mt-3 w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
                                     >
                                         Register
                                     </button>
@@ -111,4 +179,4 @@ const Login = () => {
         </>
     )
 }
-export default Login
+export default Register

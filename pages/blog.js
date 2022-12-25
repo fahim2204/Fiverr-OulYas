@@ -5,6 +5,7 @@ import Footer from '../components/footer'
 import { BiArrowBack } from "react-icons/bi";
 
 
+
 export default function Home() {
   return (
     <>
