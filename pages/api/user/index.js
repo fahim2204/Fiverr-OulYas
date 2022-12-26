@@ -3,6 +3,7 @@ import User from "../../../model/user";
 import Post from "../../../model/post";
 import Comment from "../../../model/comment";
 import { validateToken } from "../../../middleware/auth";
+import { hash } from "bcryptjs";
 const Ajv = require('ajv');
 
 const ajv = new Ajv({ allErrors: true, $data: true, });
@@ -51,6 +52,7 @@ export default async (req, res) => {
             if (!ajv.validate(userValidationSchema, req.body)) {
                 return res.status(400).json({ errors: ajv.errors });
             }
+            req.body.password = await hash(req.body.password, 12)
             await User.create(req.body).then(() =>
                 res.status(201).json({ success: true, msg: "Registration success!!" })
             ).catch(err =>

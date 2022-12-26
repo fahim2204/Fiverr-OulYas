@@ -6,7 +6,7 @@ import { compare } from 'bcryptjs';
 import dbConnect from "../../../lib/dbConnect";
 import User from "../../../model/user";
 
-
+var _user = null;
 export default NextAuth({
   providers: [
     FacebookProvider({
@@ -35,6 +35,10 @@ export default NextAuth({
         if (!checkPassword || result.email !== credentials.email) {
           throw new Error("username/password is invalid!!");
         }
+        _user = {
+          fullName: result.fullName,
+          username: result.username
+        };
 
         return result;
 
@@ -44,5 +48,16 @@ export default NextAuth({
   secret: "XH6bp/TkLvnUkQiPDEZNyHc0CV+VV5RL/n+HdVHoHN0=",
   session: {
     strategy: 'jwt',
+    maxAge: 3000,
+  },
+  callbacks: {
+    async session({ session, token, user }) {
+      session.user = token.user;
+      // you might return this in new version
+      return Promise.resolve(_user)
+    },
+    async jwt({ token, user, account, profile, isNewUser }) {
+      return token
+    }
   }
 })
