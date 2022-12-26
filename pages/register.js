@@ -132,7 +132,7 @@ const Register = () => {
                                     </button>
                                 </div>
                                 <h3 className="mb-3 mt-1 text-sm font-semibold text-gray-500 text-center">Already Registered? <Link href={"/login"} className='hover:text-sky-500 cursor-pointer'>Login</Link></h3>
-                                <div className="flex flex-col space-y-4">
+                                {/* <div className="flex flex-col space-y-4">
                                     <span className="flex items-center justify-center space-x-2">
                                         <span className="h-px bg-gray-400 w-14"></span>
                                         <span className="font-normal text-gray-500">or login with</span>
@@ -170,7 +170,7 @@ const Register = () => {
                                             </span>
                                         </a>
                                     </div>
-                                </div>
+                                </div> */}
                             </form>
                         </div>
                     </div>
