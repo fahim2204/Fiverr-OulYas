@@ -42,9 +42,9 @@ export default function Home() {
                   />
                 </div>
 
-                <h3 className="text-slate-600 font-semibold mt-2">@{session?.username}</h3>
+                <h3 className="text-slate-600 font-semibold mt-2">@{session?.email}</h3>
                 <h3 className="text-xl font-semibold mb-3 mt-1 text-slate-800 drop-shadow">
-                  {session?.fullName}
+                  {session?.name}
                 </h3>
               </div>
             </div>
@@ -63,7 +63,7 @@ export default function Home() {
                       type="text"
                       id="fullName"
                       name="fullName"
-                      autofocus
+                      value={session?.name}
                       className="px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
                     />
                   </div>

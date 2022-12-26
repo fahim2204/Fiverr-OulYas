@@ -8,7 +8,8 @@ const postSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   modifiedAt: { type: Date, default: Date.now },
   status: { type: Number, default: 1 },
-  user: { type: mongoose.SchemaTypes.ObjectId, ref: "User" }
+  username: { type: String},
+  fullName: { type: String}
 });
 
 

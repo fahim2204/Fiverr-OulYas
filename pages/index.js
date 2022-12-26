@@ -2,8 +2,29 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Navbar from '../components/navbar'
 import BlogList from '../components/blogList'
+import { useEffect, useState, useRef } from "react";
+import { BallTriangle } from "react-loader-spinner";
+import axios from "axios";
+
 
 export default function Home() {
+  const [blogList, setBlogList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get(`/api/post`)
+      .then((x) => {
+        setIsLoading(false);
+        setBlogList(x.data.data);
+      })
+      .catch(() => {
+        setIsLoading(true);
+        notify("Can't Fetch Images!!");
+      });
+  }, []);
+
+
   return (
     <>
       <Head>
@@ -17,11 +38,28 @@ export default function Home() {
         <div className='sm:max-w-6xl mx-auto mt-8 px-6'>
           <div className="grid grid-cols-14 gap-8 mb-5">
             <div className="col-span-10">
-              <div className="grid grid-cols-2 gap-8">
-                <BlogList />
-                <BlogList />
-                <BlogList />
-              </div>
+              {isLoading ? (
+                <div className="w-full flex justify-center mt-10">
+                  <BallTriangle
+                    height={100}
+                    width={100}
+                    radius={5}
+                    color="#4fa94d"
+                    ariaLabel="ball-triangle-loading"
+                    wrapperClass={{}}
+                    wrapperStyle=""
+                    visible={true}
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-8">
+                    {blogList.map((item) => {
+                      return <BlogList blog={item} />
+                    })}
+                  </div>
+                </>
+              )}
             </div>
             <div className="col-span-4">
               <div className="flex flex-col">

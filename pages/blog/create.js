@@ -5,28 +5,78 @@ import Footer from "../../components/footer";
 import { BiArrowBack } from "react-icons/bi";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { getSession, useSession } from "next-auth/react";
+import axios from "axios";
+import { apiUrl, MainTitle, notify } from "../../utils/config";
+import { ToastContainer } from "react-toastify";
+
+
 
 export default function Home() {
   const router = useRouter();
   const [serverError, setServerError] = useState(null);
+  const { data: session } = useSession();
+  const [selectedFile, setSelectedFile] = useState("");
+  const [imgBase64, setImgBase64] = useState("");
+  const [profileImage, setProfileImage] = useState("");
 
 
+  const imgToBase64 = (image) => {
+    let base64String = "";
+    var reader = new FileReader();
+    reader.onload = function () {
+      base64String = reader.result;
+      setImgBase64(base64String);
+      setFormData({ ...formData, postImage: base64String });
+    };
+    reader.readAsDataURL(image);
+  };
+  useEffect(() => {
+    if (!selectedFile) {
+      setProfileImage(undefined);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(selectedFile);
+    setProfileImage(objectUrl);
+    imgToBase64(selectedFile);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedFile]);
 
-  async function onSubmit(values) {
-    axios
-      .post(`/api/user`, values)
-      .then((x) => {
-        setServerError([]);
-        notify("Registration success!!");
-        router.push("/login");
-      })
-      .catch((e) => {
-        if (e.response.data.errors) {
-          setServerError(e.response.data.errors);
-        } else {
-          console.log("Error>> ", e);
-        }
-      });
+  const [formData, setFormData] = useState({
+    postTitle: "",
+    postDetails: "",
+    postImage: "",
+    username: session.email,
+    fullName: session.name,
+  });
+
+  useEffect(() => {
+    console.log("formData", formData);
+  }, [formData])
+
+  const handleFromData = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (formData['postTitle'].length < 3 || formData['postDetails'].length < 3 || formData['postImage'].length < 3) {
+      setServerError(true)
+    } else {
+      axios
+        .post(`/api/post`, formData)
+        .then((x) => {
+          setServerError([]);
+          notify("Post Create success!!");
+          router.push("/");
+        })
+        .catch((e) => {
+          if (e.response) {
+            setServerError(e.response);
+          } else {
+            console.log("Error>> ", e);
+          }
+        });
+    }
   }
 
   return (
@@ -36,8 +86,9 @@ export default function Home() {
       </Head>
       <main>
         <Navbar />
+        <ToastContainer />
         <div className="sm:max-w-lg mx-auto mt-6 mb-5">
-          {/* <form onSubmit={formik.handleSubmit} className="flex flex-col space-y-3">
+          <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
             <div className="flex flex-col space-y-2">
               <label for="email" className="text-sm font-semibold text-gray-500">
                 Post Title
@@ -46,15 +97,10 @@ export default function Home() {
                 type="text"
                 id="postTitle"
                 name="postTitle"
-                className={`px-3 py-1 transition duration-300 borderborder-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200`}
-                onChange
-                {...formik.getFieldProps("postTitle")}
+                className="px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
+                value={formData["postTitle"]}
+                onChange={(e) => handleFromData(e)}
               />
-              <div className="text-rose-600 text-xs mt-1">
-                {formik.errors.postTitle && formik.touched.postTitle && (
-                  <div>{formik.errors.postTitle}</div>
-                )}
-              </div>
             </div>
             <div className="flex flex-col space-y-2">
               <label for="postDetails" className="text-sm font-semibold text-gray-500">
@@ -64,49 +110,21 @@ export default function Home() {
                 type="postDetails"
                 id="postDetails"
                 name="postDetails"
-                className={`px-3 py-1 transition duration-300 border ${
-                  formik.errors.postDetails && formik.touched.postDetails
-                    ? "border-rose-600"
-                    : "border-gray-300"
-                } rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200`}
-                {...formik.getFieldProps("postDetails")}
+                className={`px-3 py-1 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200`}
                 rows="4"
                 placeholder="Write your thoughts here..."
+                value={formData["postDetails"]}
+                onChange={(e) => handleFromData(e)}
               ></textarea>
-              <div className="text-rose-600 text-xs mt-1">
-                {formik.errors.postDetails && formik.touched.postDetails && (
-                  <div>{formik.errors.postDetails}</div>
-                )}
-              </div>
             </div>
             <div className="flex flex-col space-y-2">
               <div className="flex items-center justify-between">
                 <label for="postImage" className="text-sm font-semibold text-gray-500">
-                  postImage
+                  Post Image
                 </label>
               </div>
-
-              <input type="file" accept="image/*" {...field} />
-              {meta.touched && meta.error ? <div className="error">{meta.error}</div> : null}
-              <div className="text-rose-600 text-xs mt-1">
-                {formik.errors.postImage && formik.touched.postImage && (
-                  <div>{formik.errors.postImage}</div>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col space-y-1">
-              <ul className="list-disc m-0 flex flex-col ml-6">
-                {serverError &&
-                  serverError.map((err) => {
-                    return (
-                      <>
-                        <li className="text-rose-600 leading-5 text-sm">
-                          {err.instancePath.replace("/", "")} {err.message}
-                        </li>
-                      </>
-                    );
-                  })}
-              </ul>
+              <input type="file" accept="image/png, image/gif, image/jpeg, image/jpg"
+                onChange={(e) => setSelectedFile(e.target.files[0])} />
             </div>
             <div>
               <button
@@ -116,10 +134,27 @@ export default function Home() {
                 Create Post
               </button>
             </div>
-          </form> */}
+          </form>
         </div>
         <Footer />
       </main>
     </>
   );
+}
+
+
+export async function getServerSideProps({ req }) {
+  const session = await getSession({ req });
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        premanent: false,
+      },
+    };
+  }
+  return {
+    props: { session },
+  };
 }

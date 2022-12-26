@@ -19,7 +19,7 @@ export default NextAuth({
     }),
     CredentialsProvider({
       name: "Credentials",
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         dbConnect().catch(error => { error: "Connection Failed...!" })
 
         // check user existance
@@ -36,11 +36,12 @@ export default NextAuth({
           throw new Error("username/password is invalid!!");
         }
         _user = {
-          fullName: result.fullName,
-          username: result.username
+          name: result.fullName,
+          email: result.username,
+          id: result._id
         };
 
-        return result;
+        return _user;
 
       }
     })
@@ -51,13 +52,11 @@ export default NextAuth({
     maxAge: 3000,
   },
   callbacks: {
-    async session({ session, token, user }) {
-      session.user = token.user;
-      // you might return this in new version
-      return Promise.resolve(_user)
+    async jwt({ token, user }) {
+     return { ...token, ...user }
     },
-    async jwt({ token, user, account, profile, isNewUser }) {
-      return token
-    }
-  }
+     async session({ session, user, token }) {
+     return token
+    },
+   },
 })
